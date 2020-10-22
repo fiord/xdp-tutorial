@@ -43,6 +43,11 @@ int  xdp_stats1_func(struct xdp_md *ctx)
 	 * use an atomic operation.
 	 */
 	lock_xadd(&rec->rx_packets, 1);
+
+  void *data_end = (void*)(long)ctx->data_end;
+  void *data = (void*)(long)ctx->data;
+  __u64 bytes = data_end - data;
+  lock_xadd(&rec->rx_bytes, bytes);
         /* Assignment#1: Add byte counters
          * - Hint look at struct xdp_md *ctx (copied below)
          *
