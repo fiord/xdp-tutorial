@@ -48,6 +48,9 @@ static const struct option_wrapper long_options[] = {
 	{{"unload",      no_argument,		NULL, 'U' },
 	 "Unload XDP program instead of loading"},
 
+  {{"reuse-maps",  no_argument,   NULL, 'M' },
+   "Reuse pinned maps"},
+
 	{{"quiet",       no_argument,		NULL, 'q' },
 	 "Quiet mode (no output)"},
 
