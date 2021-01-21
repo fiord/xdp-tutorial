@@ -2,9 +2,9 @@
 #include <stddef.h>
 #include <linux/bpf.h>
 #include <linux/in.h>
-#include <linux/icmp.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
+#include <arpa/inet.h>
 #include "../common/parsing_helpers.h"
 #include "../common/xdp_stats_kern_user.h"
 #include "../common/xdp_stats_kern.h"
@@ -13,8 +13,8 @@
 #define memcpy(dst, src, n) __builtin_memcpy((dest), (src), (n))
 #endif
 
-SEC("xdp_icmp")
-int  xdp_icmp_func(struct xdp_md *ctx)
+SEC("xdp_target")
+int  xdp_target_func(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
@@ -24,6 +24,8 @@ int  xdp_icmp_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   struct ipv6hdr *ipv6hdr;
+  u_int32_t ignore_addr;
+  inet_pton(AF_INET, "203.178.135.112", &ignore_addr);
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
@@ -40,12 +42,10 @@ int  xdp_icmp_func(struct xdp_md *ctx)
 	 */
   eth_type = parse_ethhdr(&nh, data_end, &eth);
 	if (eth_type == bpf_htons(ETH_P_IPV6)) {
-    ip_type = parse_ip6hdr(&nh, data_end, &ipv6hdr);
-    if (ip_type != IPPROTO_ICMPV6)
-      goto out;
+    goto out;
   } else if (eth_type == bpf_htons(ETH_P_IP)) {
     ip_type = parse_iphdr(&nh, data_end, &iphdr);
-    if (ip_type != IPPROTO_ICMP)
+    if (iphdr->saddr != ignore_addr && iphdr->daddr != ignore_addr)
       goto out;
   }
 
