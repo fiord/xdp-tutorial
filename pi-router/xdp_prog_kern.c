@@ -1,6 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <stddef.h>
-#include <stdint.h>
 #include <linux/bpf.h>
 #include <linux/in.h>
 #include <bpf/bpf_helpers.h>
@@ -24,7 +23,7 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   // struct ipv6hdr *ipv6hdr;
-  const uint32_t ignore_addr = (203u << 24) | (178u << 16) | (135u << 8) | 112u;
+  const __be32 ignore_addr = (203u << 24) | (178u << 16) | (135u << 8) | 112u;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
