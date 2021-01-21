@@ -4,7 +4,6 @@
 #include <linux/in.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
-#include <arpa/inet.h>
 #include "../common/parsing_helpers.h"
 #include "../common/xdp_stats_kern_user.h"
 #include "../common/xdp_stats_kern.h"
@@ -24,8 +23,7 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   struct ipv6hdr *ipv6hdr;
-  u_int32_t ignore_addr;
-  inet_pton(AF_INET, "203.178.135.112", &ignore_addr);
+  const u_int32_t ignore_addr = (203 << 24) | (178 << 16) | (135 << 8) | 112;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
