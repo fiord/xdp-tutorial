@@ -11,6 +11,7 @@
 
 #ifndef memcpu
 #define memcpy(dst, src, n) __builtin_memcpy((dest), (src), (n))
+#endif
 
 SEC("xdp_icmp")
 int  xdp_icmp_func(struct xdp_md *ctx)
@@ -39,11 +40,11 @@ int  xdp_icmp_func(struct xdp_md *ctx)
 	 * header type in the packet correct?), and bounds checking.
 	 */
   eth_type = parse_ethhdr(&nh, data_end, &eth);
-	if (nh_type == bpf_htons(ETH_P_IPV6)) {
+	if (eth_type == bpf_htons(ETH_P_IPV6)) {
     ip_type = parse_ip6hdr(&nh, data_end, &ipv6hdr);
     if (ip_type != IPPROTO_ICMPV6)
       goto out;
-  } else if (nh_type == bpf_htons(ETH_P_IP)) {
+  } else if (eth_type == bpf_htons(ETH_P_IP)) {
     ip_type = parse_iphdr(&nh, data_end, &iphdr);
     if (ip_type != IPPROTO_ICMP)
       goto out;
