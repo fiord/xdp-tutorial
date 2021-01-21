@@ -22,7 +22,6 @@ int  xdp_icmp_func(struct xdp_md *ctx)
 	struct ethhdr *eth;
   int eth_type;
   int ip_type;
-  int icmp_type;
   struct iphdr *iphdr;
   struct ipv6hdr *ipv6hdr;
 
