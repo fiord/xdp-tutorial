@@ -43,6 +43,8 @@ int  xdp_target_func(struct xdp_md *ctx)
     goto out;
   } else if (eth_type == bpf_htons(ETH_P_IP)) {
     ip_type = parse_iphdr(&nh, data_end, &iphdr);
+    if (iphdr + sizeof(struct iphdr) > data_end)
+      return -1;
     if (iphdr->saddr != ignore_addr && iphdr->daddr != ignore_addr)
       goto out;
   }
