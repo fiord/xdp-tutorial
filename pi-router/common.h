@@ -3,6 +3,9 @@
 
 #include <time.h>
 #include <linux/bpf.h>
+#include <linux/unistd.h>
+#include <bpf/bpf.h>
+#include "../common/common_util.h"
 
 #define EXIT_OK                 0
 #define EXIT_FAIL               1
@@ -41,7 +44,7 @@ static int blacklist_modify(int fd, char *ip_string, unsigned int action) {
   __u32 key;
   int res;
 
-  memset(values, 0, sizeof(__u32) * nr_cpus);
+  memset(values, 1, sizeof(__u32) * nr_cpus);
 
   res = inet_pton(AF_INET, ip_string, &key);
   if (res <= 0) {

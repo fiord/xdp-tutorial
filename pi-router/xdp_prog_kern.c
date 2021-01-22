@@ -14,8 +14,8 @@
 
 struct bpf_map_def SEC("maps") blacklist = {
   .type = BPF_MAP_TYPE_PERCPU_HASH,
-  .key_size = sizeof(u32),
-  .value_size = sizeof(u32), // no usage now
+  .key_size = sizeof(__u32),
+  .value_size = sizeof(__u32), // no usage now
   .max_entries = 100000,
   .map_flags = BPF_F_NO_PREALLOC,
 };
@@ -31,7 +31,8 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   // struct ipv6hdr *ipv6hdr;
-  u32 *value;
+  __u32 *value;
+  __u32 *value2;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
@@ -55,14 +56,15 @@ int  xdp_target_func(struct xdp_md *ctx)
     if (iphdr + sizeof(struct iphdr) > data_end)
       return -1;
 
-    value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr), &(iphdr->daddr));
-    if (value == 0)
+    value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr));
+    value2 = bpf_map_lookup_elem(&blacklist, &(iphdr->daddr));
+    if (value != 0 && value2 != 0)
       goto out;
   }
 
 	action = XDP_DROP;
 out:
-	return xdp_stats_record_action(ctx, action);
+	return action;  // xdp_stats_record_action(ctx, action);
 }
 
 char _license[] SEC("license") = "GPL";
