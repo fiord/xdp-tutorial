@@ -23,7 +23,7 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   // struct ipv6hdr *ipv6hdr;
-  const __be32 ignore_addr = (203u << 24) | (178u << 16) | (135u << 8) | 112u;
+  const __be32 ignore_addr = (192u << 24) | (168u << 16) | (0u << 8) | 15u;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
