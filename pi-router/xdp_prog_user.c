@@ -17,8 +17,10 @@ static const char *__doc__="XDP pi-router: cmd-tool";
 #include <arpa/inet.h>
 
 // TODO: remove unnecessary import
-#include "../common/xdp_stats_kern_user.h"
-#include "../common/xdp_stats_kern.h"
+#typedef u64 __u64
+#typedef u32 __u32
+// #include "../common/xdp_stats_kern_user.h"
+// #include "../common/xdp_stats_kern.h"
 #include "common.h"
 
 static const struct option long_options[] = {

@@ -5,8 +5,8 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
 #include "../common/parsing_helpers.h"
-#include "../common/xdp_stats_kern_user.h"
-#include "../common/xdp_stats_kern.h"
+// #include "../common/xdp_stats_kern_user.h"
+// #include "../common/xdp_stats_kern.h"
 
 #ifndef memcpu
 #define memcpy(dst, src, n) __builtin_memcpy((dest), (src), (n))

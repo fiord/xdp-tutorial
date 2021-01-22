@@ -2,6 +2,7 @@
 #define __XDP_PI_ROUTER_COMMON_H
 
 #include <time.h>
+#include <linux/bpf.h>
 
 #define EXIT_OK                 0
 #define EXIT_FAIL               1
@@ -18,9 +19,9 @@
 
 static int verbose = 1;
 
-static const *file_blacklist = "/sys/fs/bpf/pi_router_blacklist";
+static const char *file_blacklist = "/sys/fs/bpf/pi_router_blacklist";
 
-#define NENOSEC_PER_SEC 1000000000
+#define NANOSEC_PER_SEC 1000000000
 uint64_t gettime(void) {
   struct timespec t;
   int res = clock_gettime(CLOCK_MONOTONIC, &t);
@@ -40,7 +41,7 @@ static int blacklist_modify(int fd, char *ip_string, unsigned int action) {
   __u32 key;
   int res;
 
-  memset(values, 0, sizeof(__u32), * nr_cpus);
+  memset(values, 0, sizeof(__u32) * nr_cpus);
 
   res = inet_pton(AF_INET, ip_string, &key);
   if (res <= 0) {
