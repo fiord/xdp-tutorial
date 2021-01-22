@@ -31,8 +31,9 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   // struct ipv6hdr *ipv6hdr;
-  __u32 *value;
-  __u32 *value2;
+  // __u32 *value;
+  // __u32 *value2;
+  __u32 ignore_ip = (192 << 24) | (168 << 16) | (0 << 8) | 15;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
@@ -56,9 +57,10 @@ int  xdp_target_func(struct xdp_md *ctx)
     if (iphdr + 1 > data_end)
       return -1;
 
-    value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr));
-    value2 = bpf_map_lookup_elem(&blacklist, &(iphdr->daddr));
-    if (value != 0 && value2 != 0)
+
+    // value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr));
+    // value2 = bpf_map_lookup_elem(&blacklist, &(iphdr->daddr));
+    if (iphdr->saddr != ignore_ip && iphdr->daddr != ignore_ip)
       goto out;
   }
 
