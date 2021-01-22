@@ -12,6 +12,14 @@
 #define memcpy(dst, src, n) __builtin_memcpy((dest), (src), (n))
 #endif
 
+struct bpf_map_def SEC("maps") blacklist = {
+  .type = BPF_MAP_TYPE_PERCPU_HASH,
+  .key_size = sizeof(u32),
+  .value_size = sizeof(u32), // no usage now
+  .max_entries = 100000,
+  .map_flags = BPF_F_NO_PREALLOC,
+};
+
 SEC("xdp_target")
 int  xdp_target_func(struct xdp_md *ctx)
 {
@@ -23,7 +31,7 @@ int  xdp_target_func(struct xdp_md *ctx)
   int ip_type;
   struct iphdr *iphdr;
   // struct ipv6hdr *ipv6hdr;
-  const __be32 ignore_addr = (192u << 24) | (168u << 16) | (0u << 8) | 15u;
+  u32 *value;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
@@ -40,18 +48,21 @@ int  xdp_target_func(struct xdp_md *ctx)
 	 */
   eth_type = parse_ethhdr(&nh, data_end, &eth);
 	if (eth_type == bpf_htons(ETH_P_IPV6)) {
+    // not handle for IPv6 yet
     goto out;
   } else if (eth_type == bpf_htons(ETH_P_IP)) {
     ip_type = parse_iphdr(&nh, data_end, &iphdr);
     if (iphdr + sizeof(struct iphdr) > data_end)
       return -1;
-    if (iphdr->saddr != ignore_addr && iphdr->daddr != ignore_addr)
+
+    value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr), &(iphdr->daddr));
+    if (value == 0)
       goto out;
   }
 
 	action = XDP_DROP;
 out:
-	return action;
+	return xdp_stats_record_action(ctx, action);
 }
 
 char _license[] SEC("license") = "GPL";
