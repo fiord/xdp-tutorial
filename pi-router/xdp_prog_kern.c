@@ -35,7 +35,9 @@ int  xdp_target_func(struct xdp_md *ctx)
   // struct ipv6hdr *ipv6hdr;
   // __u32 *value;
   // __u32 *value2;
+  __u32 ignore_mask = 0bFFFFFFFF;
   __u32 ignore_ip = (192 << 24) | (168 << 16) | (0 << 8) | 15;
+  ignore_ip &= ignore_mask;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
 	 * we don't want to deal with, we just pass up the stack and let the
@@ -62,7 +64,7 @@ int  xdp_target_func(struct xdp_md *ctx)
 
     // value = bpf_map_lookup_elem(&blacklist, &(iphdr->saddr));
     // value2 = bpf_map_lookup_elem(&blacklist, &(iphdr->daddr));
-    if (iphdr->saddr != ignore_ip && iphdr->daddr != ignore_ip)
+    if ((iphdr->saddr&ignore_mask) != ignore_ip && (iphdr->daddr&ignore_mask) != ignore_ip)
       goto out;
   }
 
