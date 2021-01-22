@@ -35,8 +35,8 @@ int  xdp_target_func(struct xdp_md *ctx)
   // struct ipv6hdr *ipv6hdr;
   // __u32 *value;
   // __u32 *value2;
-  __u32 ignore_mask = 0bFFFFFFFF;
-  __u32 ignore_ip = (192 << 24) | (168 << 16) | (0 << 8) | 15;
+  __u32 ignore_mask = 0xFFFFFFFF;
+  __u32 ignore_ip = (192 << 0) | (168 << 8) | (0 << 16) | (15 << 24);
   ignore_ip &= ignore_mask;
 
 	/* Default action XDP_PASS, imply everything we couldn't parse, or that
