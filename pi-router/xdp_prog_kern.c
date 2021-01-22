@@ -66,6 +66,9 @@ int  xdp_target_func(struct xdp_md *ctx)
     // value2 = bpf_map_lookup_elem(&blacklist, &(iphdr->daddr));
     if ((iphdr->saddr&ignore_mask) != ignore_ip && (iphdr->daddr&ignore_mask) != ignore_ip)
       goto out;
+  } else {
+    // not supported
+    goto out;
   }
 
 	action = XDP_DROP;
