@@ -68,11 +68,11 @@ int open_bpf_map(const char *file) {
   return fd;
 }
 
-static u32 get_key32_value32_percpu(int fd, u32 key) {
+static __u32 get_key32_value32_percpu(int fd, __u32 key) {
   // for percpu maps, userspace gets a value per possible CPU
   unsigned int nr_cpus = bpf_num_possible_cpus();
-  u32 values[nr_cpus];
-  u32 sum = 0;
+  __u32 values[nr_cpus];
+  __u32 sum = 0;
   int i;
 
   if ((bpf_map_lookup_elem(fd, &key, values)) != 0) {
@@ -85,18 +85,18 @@ static u32 get_key32_value32_percpu(int fd, u32 key) {
   return sum;
 }
 
-static void blacklist_print_ipv4(u32 ip, u32 count) {
+static void blacklist_print_ipv4(__u32 ip, __u32 count) {
   char ip_txt[INET_ADDRSTRLEN] = {0};
   if (!inet_ntop(AF_INET, &ip, ip_txt, sizeof(ip_txt))) {
-    fprintf(stderr, "Error: Cannot convert u32 IP:0x%X to IP-txt\n", ip);
+    fprintf(stderr, "Error: Cannot convert __u32 IP:0x%X to IP-txt\n", ip);
     exit(EXIT_FAIL_IP);
   }
   printf("\n \"%s\": %llu", ip_txt, count);
 }
 
 static void blacklist_list_all_ipv4(int fd) {
-  u32 key, *prev_key = NULL;
-  u32 value;
+  __u32 key, *prev_key = NULL;
+  __u32 value;
 
   while(bpf_map_get_next_key(fd, prev_key, &key) == 0) {
     printf("%s", key ? "," : "");
