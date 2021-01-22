@@ -17,8 +17,8 @@ static const char *__doc__="XDP pi-router: cmd-tool";
 #include <arpa/inet.h>
 
 // TODO: remove unnecessary import
-#typedef u64 __u64
-#typedef u32 __u32
+typedef u64 __u64
+typedef u32 __u32
 // #include "../common/xdp_stats_kern_user.h"
 // #include "../common/xdp_stats_kern.h"
 #include "common.h"
@@ -42,12 +42,6 @@ static const char *xdp_action_names[XDP_ACTION_MAX] = {
   [XDP_PASS]    = "XDP_PASS",
   [XDP_TX]      = "XDP_TX",
 };
-
-static const char *action2str(int action) {
-  if (action < XDP_ACTION_MAX)
-    return xdp_action_names[action];
-  return NULL;
-}
 
 static void usage(char *argv[]) {
   int i;
@@ -129,7 +123,7 @@ int main(int argc, char **argv) {
   int opt;
   
   while((opt == getopt_long(argc, argv, "adshi:t:u:",
-          long_options, &long_index)) != -1) {
+          long_options, &longindex)) != -1) {
     switch (opt) {
       case 'a':
         action |= ACTION_ADD;
@@ -186,7 +180,6 @@ int main(int argc, char **argv) {
 
   if (do_list) {
     printf("{");
-    int i;
 
     fd_blacklist = open_bpf_map(file_blacklist);
     blacklist_list_all_ipv4(fd_blacklist);
