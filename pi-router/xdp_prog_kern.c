@@ -12,6 +12,7 @@
 #define memcpy(dst, src, n) __builtin_memcpy((dest), (src), (n))
 #endif
 
+/*
 struct bpf_map_def SEC("maps") blacklist = {
   .type = BPF_MAP_TYPE_PERCPU_HASH,
   .key_size = sizeof(__u32),
@@ -19,6 +20,7 @@ struct bpf_map_def SEC("maps") blacklist = {
   .max_entries = 100000,
   .map_flags = BPF_F_NO_PREALLOC,
 };
+*/
 
 SEC("xdp_target")
 int  xdp_target_func(struct xdp_md *ctx)
